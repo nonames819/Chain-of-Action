@@ -39,6 +39,7 @@ This repository offers the official implementation of Chain-of-Action on RLBench
    conda create -n coa python=3.9 -y
    conda activate coa
    bash scripts/init.sh
+   source ~/.bashrc
    ```
 
 install dependencies and RLBench enviroment, see [init.sh](scripts/init.sh) for details
