@@ -63,8 +63,7 @@ def check_for_kill_input(timeout: int = 0.0001):
     events = sel.select(timeout)
     if events:
         key, _ = events[0]
-        return key.fileobj.readline().rstrip("
-").lower() == "q"
+        return key.fileobj.readline().rstrip("").lower() == "q"
     else:
         return False
 

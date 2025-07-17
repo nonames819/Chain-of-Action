@@ -26,9 +26,8 @@ def download_model_for_task(task_name, save_dir="ckpt", repo_id="Solomonz/chain-
     """Download pretrained model for a specific task. Always print the pt path if found, else empty string."""
     cache_dir = os.path.join(save_dir, "cache")
     os.makedirs(save_dir, exist_ok=True)
-    pattern = f"*_{task_name}_*coa*.pt"
 
-    # 先查找本地
+    pattern = f"*_{task_name}_*coa*.pt"
     pt_files = glob.glob(os.path.join(save_dir, "**", pattern), recursive=True)
     if pt_files:
         print(pt_files[0])

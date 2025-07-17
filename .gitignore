@@ -1,3 +1,7 @@
+#custom
+coa/
+data/
+
 # HTML files
 *.html
 
@@ -30,7 +34,6 @@ wheels/
 
 # Virtual Environment
 venv/
-env/
 ENV/
 .env
 .venv

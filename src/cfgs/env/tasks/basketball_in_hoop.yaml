@@ -1,0 +1,5 @@
+# @package _global_
+
+env:
+  task_name: basketball_in_hoop
+  episode_length: ${env.tasks.${env.task_name}.episode_length}
