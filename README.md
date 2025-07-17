@@ -3,30 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://chain-of-action.github.io/">
-    <img
-      src="https://img.shields.io/badge/Website-Visit-0A66C2?logo=safari&logoColor=white"
-      alt="Website"
-    />
-  </a>
-  <a href="https://arxiv.org/pdf/2506.09990">
-    <img
-      src="https://img.shields.io/badge/Paper-arXiv-red?logo=arxiv&logoColor=red"
-      alt="Paper on arXiv"
-    />
-  </a>
-  <a href="https://huggingface.co/Solomonz/Chain-of-Action">
-    <img 
-        src="https://img.shields.io/badge/HuggingFace-Model-yellow?logo=huggingface&logoColor=yellow" 
-        alt="HuggingFace Model"
-    />
-  </a>
-  <a href="https://huggingface.co/datasets/Solomonz/Chain-of-Action">
-    <img 
-        src="https://img.shields.io/badge/HuggingFace-Data-blue?logo=huggingface&logoColor=blue" 
-        alt="HuggingFace Dataset"
-    />
-  </a>
+  <a href="https://chain-of-action.github.io/"><img src="https://img.shields.io/badge/Website-Visit-0A66C2?logo=safari&logoColor=white" alt="Website" /></a> <a href="https://arxiv.org/pdf/2506.09990"><img src="https://img.shields.io/badge/Paper-arXiv-red?logo=arxiv&logoColor=red" alt="Paper on arXiv" /></a> <a href="https://huggingface.co/Solomonz/Chain-of-Action"><img src="https://img.shields.io/badge/HuggingFace-Model-yellow?logo=huggingface&logoColor=yellow" alt="HuggingFace Model" /></a> <a href="https://huggingface.co/datasets/Solomonz/Chain-of-Action"><img src="https://img.shields.io/badge/HuggingFace-Data-blue?logo=huggingface&logoColor=blue" alt="HuggingFace Dataset" /></a>
 </p>
 
 ## Project Overview
