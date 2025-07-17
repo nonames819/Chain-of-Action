@@ -155,9 +155,16 @@ class Workspace:
                 self.logger.log_metrics(updated_metrics, step=self._current_step)
                 print(f"Step {self._current_step}/{num_train_steps}, Loss: {updated_metrics.get('total_loss', 0):.4f}")
             
-            if  self._current_step % self.cfg.vis_every_steps == 0:
-                updated_metrics = self.vis()
-                self.logger.log_metrics(updated_metrics, step=self._current_step)
+            '''
+            # The dataset in Huggingface omits point cloud observations to reduce storage requirements.
+            # and the point cloud observation is neccessary for the visualization.
+            # As a result, the visualization is not available now or you can generate the full eval dataset manually.
+            # TODO: upload full eval dataset to huggingface
+            '''            
+
+            # if  self._current_step % self.cfg.vis_every_steps == 0:
+            #     updated_metrics = self.vis()
+            #     self.logger.log_metrics(updated_metrics, step=self._current_step)
 
             if self._current_step % self.cfg.eval_every_steps == 0:
                 updated_metrics = self.eval()

@@ -578,18 +578,7 @@ class RLBenchEnvFactory(EnvFactory):
 
     def _load_demos(self, cfg,training=True):
         self.training = training
-
-        '''
-        # The "evaluation dataset" in Huggingface omits point cloud observations to reduce storage requirements.
-        # and the point cloud observation is neccessary for the visualization.
-        # As a result, we use the "training dataset" here for quick project startup.
-        # TODO: upload full eval dataset to huggingface
-        '''
         dataset_root_dir = cfg.dataset_root_train
-        # if training or cfg.debug:
-        #     dataset_root_dir = cfg.dataset_root_train
-        # else:
-        #     dataset_root_dir = cfg.dataset_root_eval
         
         obs_config = _make_obs_config(cfg)
         obs_config_demo = copy.deepcopy(obs_config)

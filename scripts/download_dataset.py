@@ -107,24 +107,6 @@ def download_task_files(task_name: str, save_dir: str, train_episodes: int, eval
     
     # Download train episodes
     if train_episodes > 0:
-        print(f"Downloading train episodes for {task_name}...")
-        for episode in range(train_episodes):
-            local_file = os.path.join(train_dir, f"episode{episode}", "low_dim_obs.pkl")
-            if os.path.exists(local_file):
-                print(f"  Skipping existing train episode {episode}")
-                continue
-            try:
-                hf_hub_download(
-                    repo_id=repo_id,
-                    repo_type="dataset",
-                    filename=f"train/{task_name}/variation0/episodes/episode{episode}/low_dim_obs.pkl",
-                    local_dir=save_dir,
-                    local_dir_use_symlinks=False,
-                    resume_download=True
-                )
-            except Exception as e:
-                print(f"  Warning: Failed to download train episode {episode}: {e}")
-                success = False
         # Download variation_descriptions.pkl for train
         variation_file = os.path.join(save_dir, "train", task_name, "variation0", "variation_descriptions.pkl")
         if os.path.exists(variation_file):
@@ -143,27 +125,29 @@ def download_task_files(task_name: str, save_dir: str, train_episodes: int, eval
             except Exception as e:
                 print(f"  Warning: Failed to download train variation_descriptions.pkl: {e}")
                 success = False
-    
-    # Download eval episodes
-    if eval_episodes > 0:
-        print(f"Downloading eval episodes for {task_name}...")
-        for episode in range(eval_episodes):
-            local_file = os.path.join(eval_dir, f"episode{episode}", "low_dim_obs.pkl")
+        # Download train episodes
+        print(f"Downloading train episodes for {task_name}...")
+        for episode in range(train_episodes):
+            local_file = os.path.join(train_dir, f"episode{episode}", "low_dim_obs.pkl")
             if os.path.exists(local_file):
-                print(f"  Skipping existing eval episode {episode}")
+                print(f"  Skipping existing train episode {episode}")
                 continue
             try:
                 hf_hub_download(
                     repo_id=repo_id,
                     repo_type="dataset",
-                    filename=f"eval/{task_name}/variation0/episodes/episode{episode}/low_dim_obs.pkl",
+                    filename=f"train/{task_name}/variation0/episodes/episode{episode}/low_dim_obs.pkl",
                     local_dir=save_dir,
                     local_dir_use_symlinks=False,
                     resume_download=True
                 )
             except Exception as e:
-                print(f"  Warning: Failed to download eval episode {episode}: {e}")
+                print(f"  Warning: Failed to download train episode {episode}: {e}")
                 success = False
+
+    
+    # Download eval episodes
+    if eval_episodes > 0:
         # Download variation_descriptions.pkl for eval
         variation_file = os.path.join(save_dir, "eval", task_name, "variation0", "variation_descriptions.pkl")
         if os.path.exists(variation_file):
@@ -182,6 +166,27 @@ def download_task_files(task_name: str, save_dir: str, train_episodes: int, eval
             except Exception as e:
                 print(f"  Warning: Failed to download eval variation_descriptions.pkl: {e}")
                 success = False
+
+        # Download eval episodes
+        print(f"Downloading eval episodes for {task_name}...")
+        for episode in range(eval_episodes):
+            local_file = os.path.join(eval_dir, f"episode{episode}", "low_dim_obs.pkl")
+            if os.path.exists(local_file):
+                print(f"  Skipping existing eval episode {episode}")
+                continue
+            try:
+                hf_hub_download(
+                    repo_id=repo_id,
+                    repo_type="dataset",
+                    filename=f"eval/{task_name}/variation0/episodes/episode{episode}/low_dim_obs.pkl",
+                    local_dir=save_dir,
+                    local_dir_use_symlinks=False,
+                    resume_download=True
+                )
+            except Exception as e:
+                print(f"  Warning: Failed to download eval episode {episode}: {e}")
+                success = False
+
     
     print(f"Completed downloading task: {task_name}")
     return success
