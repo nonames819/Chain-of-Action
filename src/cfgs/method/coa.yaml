@@ -42,7 +42,7 @@ method:
     dim_feedforward: 3200
     dropout: 0.1
     nheads: 8
-    nmtpheads: 5
+    nmtpheads: 2
     num_queries: ${action_sequence}
     pre_norm: true
     state_dim: 8
