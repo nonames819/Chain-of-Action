@@ -1,0 +1,41 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "train coa",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/train.py",
+            "args": [
+                "task=push_button",
+                "wandb.use=false",
+                "hydra.run.dir=${exp_root}/exp_local/debug/${now:%Y%m%d}/${method_name}_${env.task_name}_rlbench_${now:%Y%m%d%H%M%S}",
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "CUDA_VISIBLE_DEVIEC": "5"
+            },
+            "justMyCode": false,
+        },
+        {
+            "name": "eval coa",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/eval.py",
+            "args": [
+                "task=push_button",
+                "wandb.use=false" ,
+                "snapshot=/workspace/chd_data/Chain-of-Action/ckpt/official/rlbench_push_button_20250702092806/checkpoints/rlbench_push_button_20250702092806_coa_20000.pt"
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "CUDA_VISIBLE_DEVIEC": "5"
+            },
+            "justMyCode": false,
+        }
+    ]
+}
