@@ -645,8 +645,8 @@ class RLBenchEnvFactory(EnvFactory):
 
         # Split each trajectory into a list of sub-trajectories according to the keyframe action.
         if cfg.method_name == "coa":
-            demos = self._traj_split(raw_demos)
-            action_sequence = self._update_action_sequence_length(cfg, demos)
+            demos = self._traj_split(raw_demos) # chd: split demo into subdemos
+            action_sequence = self._update_action_sequence_length(cfg, demos) # chd: calculate max len
         else:
             demos = raw_demos
             action_sequence = cfg.action_sequence
@@ -706,14 +706,14 @@ class RLBenchEnvFactory(EnvFactory):
         for idx_demo, demo in enumerate(demos):
             episode_keypoints = keypoint_discovery(demo)
             # modify key point if it is too close to the beginning
-            if episode_keypoints[0]<10:
+            if episode_keypoints[0]<10: # chd: 前10步不许有keypose
                 assert len(episode_keypoints)>1
                 episode_keypoints[0] = 0
             else:
                 episode_keypoints = [0,] + episode_keypoints
             for idx in range(len(episode_keypoints)-1):
                 next_idx = idx + 1
-                nbp_demo = demo[episode_keypoints[idx]:episode_keypoints[next_idx]+1]
+                nbp_demo = demo[episode_keypoints[idx]:episode_keypoints[next_idx]+1] # 切片下标可以超过最后一个idx
                 # nbp_demo[-1].grippe  r_open = nbp_demo[-2].gripper_open 
                 nbp_demos.append(nbp_demo)
         return nbp_demos
@@ -743,7 +743,7 @@ class RLBenchEnvFactory(EnvFactory):
                     DemoStep(
                         timestep.joint_positions,
                         timestep.gripper_open,
-                        _extract_obs(timestep, cfg=cfg, action_space=self.get_action_space(cfg), training=self.training),
+                        _extract_obs(timestep, cfg=cfg, action_space=self.get_action_space(cfg), training=self.training), # chd: extract and norm
                         timestep.gripper_matrix,
                         timestep.misc,
                     )
@@ -756,7 +756,7 @@ class RLBenchEnvFactory(EnvFactory):
             for i in range(len(demo)):
                 demo_step = demo[i]
                 # demo_step[ActionModeType.ABS_JOINT_POSITION] = observations_to_action_abs_joint(demo_step) # TODO: To be implemented
-                demo_step[ActionModeType.ABS_END_EFFECTOR_POSE.value] = observations_to_action_abs_ee(demo_step)
+                demo_step[ActionModeType.ABS_END_EFFECTOR_POSE.value] = observations_to_action_abs_ee(demo_step) # chd: convert to 3+4+1
                 if "descriptions" in demo_step.misc and cfg.method.use_lang_cond:
                     descriptions = demo_step.misc["descriptions"][0]
                     # desc = descriptions[np.random.randint(len(descriptions))]
@@ -791,7 +791,7 @@ class RLBenchEnvFactory(EnvFactory):
                 if ActionModeType.ABS_END_EFFECTOR_POSE.value in demo_step and demo_step[ActionModeType.ABS_END_EFFECTOR_POSE.value] is not None:
                     demo_step[ActionModeType.ABS_END_EFFECTOR_POSE.value] = MinMaxNorm.normalize(
                         demo_step[ActionModeType.ABS_END_EFFECTOR_POSE.value], action_space
-                    )
+                    ) # Box: Box([-0.28 -0.66  0.75 -1.   -1.   -1.    0.    0.  ], [0.78 0.66 1.75 1.   1.   1.   1.   1.  ], (8,), float32)
 
 
     def get_action_stats(self):

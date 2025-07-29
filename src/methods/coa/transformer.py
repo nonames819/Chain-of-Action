@@ -47,7 +47,7 @@ class Transformer(nn.Module):
             d_model, nhead, dim_feedforward, dropout, activation, norm_first
         )
         decoder_norm = nn.LayerNorm(d_model)
-        if nmtpheads > 0:
+        if nmtpheads > 0: # chd: nmtpheads here
             mtp_head = MTPHeadLayer(
                 d_model, nhead, dim_feedforward, dropout, activation, norm_first
             )

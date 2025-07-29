@@ -58,7 +58,7 @@ def download_model_for_task(task_name, save_dir="ckpt", repo_id="Solomonz/chain-
 def main():
     parser = argparse.ArgumentParser(description="Download pretrained models for Chain-of-Action")
     parser.add_argument("--task", type=str, default="push_button", help="Task name to download model for")
-    parser.add_argument("--save_dir", type=str, default="coa", help="Directory to save models")
+    parser.add_argument("--save_dir", type=str, default="ckpt/official", help="Directory to save models")
     parser.add_argument("--repo_id", type=str, default="Solomonz/chain-of-action", help="HuggingFace repository ID")
     args = parser.parse_args()
     download_model_for_task(args.task, args.save_dir, args.repo_id)

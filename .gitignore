@@ -1,6 +1,7 @@
 #custom
 coa/
 data/
+ckpt/
 
 # HTML files
 *.html

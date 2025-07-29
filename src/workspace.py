@@ -88,7 +88,7 @@ class Workspace:
         # initialize the dataset and dataloader for training mode
         # or only read the action sequence for eval mode
         if train:
-            # initialize the dataset for visualization
+            # initialize the dataset for visualization (still in training set)
             vis_demos, action_sequence_vis = self.env_factory._load_demos(cfg, training=False)
             self.dataset_vis = RLBenchDataset(cfg, seq_len=action_sequence_vis)
             setattr(self.dataset_vis, '_demos', vis_demos)
@@ -105,7 +105,7 @@ class Workspace:
             self.dataloader_vis = DataLoader(
                 self.dataset_vis,
                 batch_size=1,
-            )
+            ) # chd: default with sequential sampler
             self.dataloader_vis = cycle(self.dataloader_vis)
 
             self._current_step = 0
@@ -570,7 +570,7 @@ class Workspace:
             return None
 
         # Load checkpoint
-        checkpoint = torch.load(checkpoint_path, map_location="cpu")
+        checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)  # chd: modified  
         # Compatible with old ckpt without cfg field
         self.cfg_ckpt = checkpoint.get("config", None)
         if self.cfg_ckpt is None:

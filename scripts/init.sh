@@ -3,9 +3,9 @@
 # install system dependencies 
 export DEBIAN_FRONTEND=noninteractive
 
-sudo apt-get update
+apt-get update
 
-sudo apt-get install -y --no-install-recommends \
+apt-get install -y --no-install-recommends \
     kwin-wayland \
     kwin-wayland-backend-drm \
     kwin-wayland-backend-wayland \
@@ -33,7 +33,9 @@ sudo apt-get install -y --no-install-recommends \
     libxrandr2 \
     xdg-utils
 
-# set env variables
+echo "INFO: install checked"
+
+set env variables
 export COPPELIASIM_ROOT=${HOME}/CoppeliaSim
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$COPPELIASIM_ROOT
 export QT_QPA_PLATFORM_PLUGIN_PATH=$COPPELIASIM_ROOT
@@ -48,5 +50,5 @@ mkdir -p $COPPELIASIM_ROOT && tar -xf CoppeliaSim_Edu_V4_1_0_Ubuntu20_04.tar.xz 
 rm -rf CoppeliaSim_Edu_V4_1_0_Ubuntu20_04.tar.xz
 
 # install chain-of-action and rlbench environment
-pip install -e .[rlbench] 
+# pip install -e .[rlbench] 
 

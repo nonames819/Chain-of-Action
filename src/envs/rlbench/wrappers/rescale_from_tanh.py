@@ -105,7 +105,7 @@ class RescaleFromTanh(gym.ActionWrapper, gym.utils.RecordConstructorArgs):
 def get_action_space_from_cfg(cfg) -> Box:
     from src.envs.rlbench.rlbench_env import ActionModeType, ACTION_BOUNDS
     action_mode_type = ActionModeType[cfg.env.action_mode]
-    low, high = ACTION_BOUNDS[action_mode_type]
+    low, high = ACTION_BOUNDS[action_mode_type] # array([-0.28, -0.66,  0.75, -1.  , -1.  , -1.  ,  0.  ,  0.  ], array([0.78, 0.66, 1.75, 1.  , 1.  , 1.  , 1.  , 1.  ], dtype=float32)
     return Box(low, high, dtype=np.float32)
 
 class MinMaxNorm(
