@@ -64,7 +64,8 @@ class Workspace:
         self.cfg = cfg
             
         # get work dir from hydra
-        self.work_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir)
+        self.work_dir = Path(hydra.core.hydra_config.HydraConfig.get().runtime.output_dir) \
+            if cfg.snapshot is None else os.path.dirname(os.path.dirname(cfg.snapshot))
         print(f"work dir: {self.work_dir}")
         
         
@@ -82,7 +83,13 @@ class Workspace:
         
         
         # initialize video recorder
-        video_dir = self.work_dir / 'eval_videos' if cfg.get('log_eval_video', False) else None
+        video_dir = os.path.join(self.work_dir,'eval_videos') if cfg.get('log_eval_video', False) else None
+        if cfg.snapshot is not None:
+            epoch_info = os.path.basename(cfg.snapshot).split('.')[0]
+            if video_dir is not None:
+                video_dir = os.path.join(video_dir, epoch_info)
+        else:
+            video_dir = os.path.join(video_dir, "train")
         self.eval_video_recorder = VideoRecorder(video_dir)
 
         # initialize the dataset and dataloader for training mode
@@ -166,9 +173,9 @@ class Workspace:
             #     updated_metrics = self.vis()
             #     self.logger.log_metrics(updated_metrics, step=self._current_step)
 
-            if self._current_step % self.cfg.eval_every_steps == 0:
-                updated_metrics = self.eval()
-                self.logger.log_metrics(updated_metrics, step=self._current_step)
+            # if self._current_step % self.cfg.eval_every_steps == 0:
+            #     updated_metrics = self.eval()
+            #     self.logger.log_metrics(updated_metrics, step=self._current_step)
 
             if self._current_step % self.cfg.save_every_steps == 0:
                 self.save_snapshot()
@@ -418,6 +425,7 @@ class Workspace:
         step, episode, total_reward, successes = 0, 0, 0, 0
         eval_episodes = self.cfg.get('num_eval_episodes')
         metrics = {}
+        eval_info = ""
 
         
         pkl_list = []
@@ -500,13 +508,16 @@ class Workspace:
                 successes += int(success > 0)
                 if success > 0:
                     print(f"episode {episode_idx} success")
+                    eval_info += f"Episode {episode_idx} success, steps: {episode_steps}, reward: {reward}\n"
                 else:
                     print(f"episode {episode_idx} fail")
+                    eval_info += f"Episode {episode_idx} fail, steps: {episode_steps}, reward: {reward}\n"
                 
                 
                 
             except Exception as e:
                 print(f"episode {episode_idx} failed for: {e}")
+                eval_info += f"Episode {episode_idx} failed for: {e}\n"
                 import traceback
                 traceback.print_exc()
                 ik_error += 1
@@ -539,8 +550,10 @@ class Workspace:
                 "video_fail": video_fail,
                 "fps": 10
             }
+
+        eval_info += f"{self.cfg.method_name} on {task_name}: {metrics}"
             
-        return metrics
+        return metrics, eval_info
 
     def save_snapshot(self):
         """Save model checkpoint"""

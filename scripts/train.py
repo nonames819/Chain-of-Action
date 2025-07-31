@@ -19,11 +19,6 @@ Training script for Chain-of-Action models.
 
 import sys, os
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-# 禁用 Qt 图形后端
-# os.environ["QT_QPA_PLATFORM"] = "offscreen"
-# # 强制使用软件渲染器（避免使用缺失的 GPU 驱动）
-# os.environ["QT_OPENGL"] = "software"
-# os.environ["LIBGL_ALWAYS_SOFTWARE"] = "1"
 
 import hydra
 from src.workspace import Workspace

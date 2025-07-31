@@ -38,7 +38,12 @@ def main(cfg):
     cfg.wandb.use = False
 
     workspace = Workspace(cfg, train=False)
-    workspace.eval()
+    _, eval_info = workspace.eval()
+    main_dir = os.path.dirname(os.path.dirname(cfg.snapshot))
+    ckpt_info = os.path.basename(cfg.snapshot).split(".")[0]
+    eval_info_path = os.path.join(main_dir, "eval_videos", f"{ckpt_info}/eval_info.txt")
+    with open(eval_info_path, "w") as f:
+        f.write(str(eval_info))
 
 if __name__ == "__main__":
     main() 
