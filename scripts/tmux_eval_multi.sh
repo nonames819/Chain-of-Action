@@ -13,7 +13,8 @@ tmux has-session -t $SESSION 2>/dev/null && tmux kill-session -t $SESSION
 tmux new-session -d -s $SESSION  # 创建后台新会话
 
 folders=(
-    "exp_local/20250731/coa_push_button_rlbench_20250731003250/checkpoints"
+    "exp_local/20250801/coa_open_box_rlbench_20250801010505/checkpoints"
+    # "/workspace/chd_data/Chain-of-Action/exp_local/20250801/coa_press_switch_rlbench_20250801005622/checkpoints"
 )
 
 window=0

@@ -17,7 +17,8 @@
             ],
             "console": "integratedTerminal",
             "env": {
-                "CUDA_VISIBLE_DEVIEC": "5"
+                "CUDA_VISIBLE_DEVIEC": "3",
+                "DISPLAY":"localhost:11.0"
             },
             "justMyCode": false,
         },
@@ -29,7 +30,24 @@
             "args": [
                 "task=push_button",
                 "wandb.use=false" ,
-                "snapshot=exp_local/20250731/coa_push_button_rlbench_20250731003250/checkpoints/coa_5000.pt"
+                "snapshot=exp_local/20250731/coa_push_button_rlbench_20250731003250/checkpoints/coa_5000.pt",
+                "num_eval_episodes=1"
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "CUDA_VISIBLE_DEVIEC": "5",
+                "DISPLAY":"localhost:11.0"
+            },
+            "justMyCode": false,
+        },
+        {
+            "name": "new eval coa",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/scripts/new_eval.py",
+            "args": [
+                "--snapshot=exp_local/20250731/coa_push_button_rlbench_20250731003250/checkpoints/coa_5000.pt",
+                "--num_eval_episodes=1"
             ],
             "console": "integratedTerminal",
             "env": {

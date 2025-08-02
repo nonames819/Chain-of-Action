@@ -2,3 +2,11 @@
 
 
 /root/miniforge3/envs/coa/lib/python3.9/site-packages/rlbench/backend/scene.py line234
+
+* data
+- init:
+seq_len: 最长子段
+
+
+* model
+image_enc: input (View, C, H, W) resnet18+PE

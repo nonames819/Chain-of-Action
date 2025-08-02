@@ -551,7 +551,7 @@ class Workspace:
                 "fps": 10
             }
 
-        eval_info += f"{self.cfg.method_name} on {task_name}: {metrics}"
+        eval_info += f"{self.cfg.method_name} on {task_name}: {metrics['success_rate']}"
             
         return metrics, eval_info
 
