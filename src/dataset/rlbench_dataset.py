@@ -189,7 +189,7 @@ class RLBenchDataset(Dataset):
         if self.action_order == ActionOrder.REVERSE:
             # Reverse: pad first, then concatenate, then reverse order
             action_seq = np.concatenate([action_padding, action_seq], axis=0)
-            action_seq = np.flip(action_seq, axis=0)
+            action_seq = np.flip(action_seq, axis=0) # kp at idx 0
         elif self.action_order == ActionOrder.FORWARD:
             # Forward: action first, then padding
             action_seq = np.concatenate([action_seq, action_padding], axis=0)
@@ -367,7 +367,7 @@ class RLBenchDataset(Dataset):
 
         episode = self._demos[episode_idx]
 
-        actions = episode[ActionModeType[self.cfg.env.action_mode].value]
+        actions = episode[ActionModeType[self.cfg.env.action_mode].value] # (ep_len, 8)
         ep_len = len(actions) 
 
         # Determine the sampling idx according to config
@@ -388,7 +388,7 @@ class RLBenchDataset(Dataset):
         # convert to mtp actions
         assert self.cfg.method.mtp, "mtp must be True"
         if self.cfg.method.mtp:
-            action_seq_mtp, is_pad_mtp = self.convert_to_mtp_actions(action_seq, is_pad)
+            action_seq_mtp, is_pad_mtp = self.convert_to_mtp_actions(action_seq, is_pad) # 从一个连续的action_seq中取出任意下标开始长度为mtp_size的序列和对应padding
             sample['action'] = action_seq_mtp
             sample['is_pad'] = is_pad_mtp
         else:
@@ -402,7 +402,7 @@ class RLBenchDataset(Dataset):
         # Remove original action as it's only used for action generation
         del sample[ActionModeType[self.cfg.env.action_mode].value]
         
-        #convert
+        #convert: if float, convert to float32
         sample = self.convert_dtype(sample)
 
 

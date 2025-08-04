@@ -99,7 +99,7 @@ class Transformer(nn.Module):
         obs_feat = torch.cat([obs_feat, proprio_embed], axis=0) 
         
         # query_embed = query_embed.permute(1,0,2).repeat(1, bs, 1)
-        tgt_pos_embed = tgt_pos_embed.unsqueeze(1).repeat(1, bs, 1)
+        tgt_pos_embed = tgt_pos_embed.unsqueeze(1).repeat(1, bs, 1) # torch.Size([65, 128, 512])
             
 
         # tgt = torch.zeros_like(query_embed)
@@ -122,7 +122,7 @@ class Transformer(nn.Module):
             execution_length=execution_length,
         )
 
-        return output.transpose(0, 1)
+        return output.transpose(0, 1) # final output: torch.Size([128, 97, 2, 512])
 
 
 class TransformerEncoder(nn.Module):
@@ -196,7 +196,7 @@ class TransformerDecoder(nn.Module):
         if training:  # training=True时使用teacher forcing
 
             # 简化版本：只支持abs模式
-            # 如果actions是4维的，说明是MTP（多时间步预测）格式，只取第一个时间步
+            # 如果actions是4维的，说明是MTP（多时间步预测）格式，只取第一个时间步, chd: 因为要从当前action预测后面多个action？
             if len(actions.shape) == 4:
                 # 形状是 [batch, seq, mtp_size, action_dim]，只取第一个mtp头
                 actions = actions[:, :, 0, :]  # [batch, seq, action_dim]
@@ -205,8 +205,8 @@ class TransformerDecoder(nn.Module):
                 # 形状是 [batch, seq, mtp_size]，只取第一个mtp头
                 is_pad = is_pad[:, :, 0]  # [batch, seq]
             current_input = de_action_head(actions)
-            current_input = current_input.permute(1, 0, 2)
-            current_input = torch.concat([self.sos_embedding.repeat(1,current_input.shape[1],1), current_input[:-1]])
+            current_input = current_input.permute(1, 0, 2) # torch.Size([97, 128, 512])
+            current_input = torch.concat([self.sos_embedding.repeat(1,current_input.shape[1],1), current_input[:-1]]) # 整体向后roll以为，前面拼上sos
             
             length = actions.shape[1]
             tgt_mask = ~(torch.triu(torch.ones(length, length, device=current_input.device)) == 1).transpose(0, 1)
@@ -214,11 +214,11 @@ class TransformerDecoder(nn.Module):
             # print(torch.norm(current_input[0]))
             for layer in self.layers:
                 current_input = layer(
-                    current_input,
-                    memory,
+                    current_input, # (action_len, bs, d_model) torch.Size([97, 128, 512])
+                    memory, # (len_obs, bs, d_model) torch.Size([65, 128, 512])
                     tgt_mask=tgt_mask,
                     memory_mask=None,
-                    tgt_key_padding_mask=is_pad,
+                    tgt_key_padding_mask=is_pad, # torch.Size([128, 97])
                     # memory_key_padding_mask=memory_key_padding_mask,
                     mem_pos_embed=mem_pos_embed,
                     tgt_pos_embed=tgt_pos_embed,
@@ -238,7 +238,7 @@ class TransformerDecoder(nn.Module):
                     mem_pos_embed=mem_pos_embed,
                     tgt_pos_embed=tgt_pos_embed,
                     ))
-                current_input = torch.stack(mtp_token_list, dim=-2)
+                current_input = torch.stack(mtp_token_list, dim=-2) # (action_len, bs, num_mtp, d_model) torch.Size([97, 128, 2, 512])
 
 
             # print("train2",torch.norm(current_input[0,0,0]))

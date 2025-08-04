@@ -77,17 +77,17 @@ class ImageEncoder(nn.Module):
         '''
         assert (
             self._input_shape == x.shape[1:]
-        ), f"expected input shape {self._input_shape} but got {x.shape[1:]}"
+        ), f"expected input shape {self._input_shape} but got {x.shape[1:]}" # chd: 似乎这里默认了obs的len=1，不然flatten后这里不会相等
 
         all_cam_features = []
         all_cam_pos = []
         shape = x.shape
         for cam_id in range(self._input_shape[0]):
-            # (b, v, fs, c, h, w) -> (b*fs, c, h, w)
-            cur_x = x[:, cam_id].reshape(-1, 3, *self._input_shape[2:])
+            # (b, v, fs, c, h, w) -> (b*fs, c, h, w) fs maybe frame stack (n_hist of obs) 但这里已经做过stack了，不知道是不是写错了，输入不应该是6维
+            cur_x = x[:, cam_id].reshape(-1, 3, *self._input_shape[2:]) # torch.Size([128, 3, 128, 128])
 
             # feat: (b*fs, c, h, w) -> (b*fs, feat_dim, 3, 3)
-            feat, pos = self.backbone(cur_x)
+            feat, pos = self.backbone(cur_x) # all lists, item at idx 0 with shape torch.Size([128, 512, 4, 4]) torch.Size([1, 512, 4, 4])
 
             # feat: (b*fs, feat_dim, 3, 3) -> (b*fs, hidden_dim, 3, 3)
             feat = self.input_proj(feat[0])
@@ -229,15 +229,15 @@ class ActorModel(nn.Module):
         
         # Reshape image features to sequence format: (b, c, v, l) -> (l*v, b, c)
         seq_len = img_feat.shape[2] * img_feat.shape[3]  # v * l
-        img_feat = img_feat.flatten(2).permute(2, 0, 1)
-        img_pos_embed = img_pos_embed.flatten(2).permute(2, 0, 1)
+        img_feat = img_feat.flatten(2).permute(2, 0, 1) # torch.Size([64, 128, 512])
+        img_pos_embed = img_pos_embed.flatten(2).permute(2, 0, 1) # torch.Size([64, 1, 512])
         
         # Add memory position embeddings for proprio to img_pos_embed
-        mem_pos_embed = self.learnable_mem_pos_embed
-        pos_embed = torch.cat([img_pos_embed, mem_pos_embed], dim=0)
+        mem_pos_embed = self.learnable_mem_pos_embed # torch.Size([1, 1, 512])
+        pos_embed = torch.cat([img_pos_embed, mem_pos_embed], dim=0) # torch.Size([65, 1, 512])
 
         # Proprioception embedding
-        proprio_embed = self.action2embed(proprio)
+        proprio_embed = self.action2embed(proprio) # torch.Size([128, 1, 512])
         # b,l,d -> l,b,d
         proprio_embed = proprio_embed.permute(1, 0, 2) 
 
@@ -269,7 +269,7 @@ class ActorModel(nn.Module):
         # Handle ground truth actions for training
         if actions is not None:
             # Keep actions in original dimensions, let x_gt match x_hat dimensions
-            x_gt = self.action2embed(actions)
+            x_gt = self.action2embed(actions) # original hidden state of action for loss calculation 
         else:
             x_gt = None
             
@@ -395,10 +395,10 @@ class CoA(BaseMethod):
             Tuple containing action predictions and other intermediate results
         '''
         raw_img = extract_many_from_batch(batch_input, 'rgb')
-        img = flatten_time_dim_into_channel_dim(stack_tensor_dictionary(raw_img, dim=1))
-        proprio = batch_input['low_dim_state']
+        img = flatten_time_dim_into_channel_dim(stack_tensor_dictionary(raw_img, dim=1)) # after stack, add a new dim(num_imgs) at axis 1 (4 images), then flatten num_imgs and t
+        proprio = batch_input['low_dim_state'] # (bs, t=1, 8)
         if training:
-            a_gt = batch_input['action']
+            a_gt = batch_input['action'] # [128, 97, 2, 8]
             is_pad = batch_input['is_pad']
         else:
             a_gt = None
@@ -412,7 +412,7 @@ class CoA(BaseMethod):
         # normalize img
         img = self.img_normalizer(img/255)
         # encoder forward
-        obs_feat = self.encoder_model(img) # obs_feat: img_feat, pos_embed
+        obs_feat = self.encoder_model(img) # obs_feat: img_feat, pos_embed  torch.Size([128, 512, 4, 16]) torch.Size([1, 512, 4, 16]) concat the feature map at dim 3
         # actor forward
         a_hat, x_hat, x_gt = self.actor_model(obs_feat, proprio, task_emb, a_gt, is_pad, training=training)
         return a_hat, a_gt, x_hat, x_gt, is_pad, proprio, task_emb
