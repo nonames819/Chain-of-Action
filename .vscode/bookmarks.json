@@ -9,6 +9,26 @@
 					"label": ""
 				}
 			]
+		},
+		{
+			"path": "src/envs/rlbench/rlbench_env.py",
+			"bookmarks": [
+				{
+					"line": 395,
+					"column": 0,
+					"label": "reset here"
+				}
+			]
+		},
+		{
+			"path": "src/envs/rlbench/wrappers/action_sequence.py",
+			"bookmarks": [
+				{
+					"line": 380,
+					"column": 0,
+					"label": "default exec_len=1"
+				}
+			]
 		}
 	]
 }

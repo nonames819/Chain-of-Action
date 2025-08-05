@@ -411,7 +411,8 @@ class RLBenchDataset(Dataset):
 
 
 
-@hydra.main(config_path="../cfgs/", config_name="launch_act", version_base=None)
+# @hydra.main(config_path="../cfgs/", config_name="launch_act", version_base=None)
+@hydra.main(config_path="../cfgs/", config_name="launch", version_base=None)
 def main(cfg: DictConfig):
     """
     Test function for RLBenchDataset with a minimal training loop

@@ -122,7 +122,7 @@ class Transformer(nn.Module):
             execution_length=execution_length,
         )
 
-        return output.transpose(0, 1) # final output: torch.Size([128, 97, 2, 512])
+        return output.transpose(0, 1) # final output - training: torch.Size([128, 97, 2, 512]) inference: torch.Size([1, 97, 1, 512])
 
 
 class TransformerEncoder(nn.Module):
@@ -297,11 +297,11 @@ class TransformerDecoder(nn.Module):
                 if action_order == 'REVERSE':
                     v_sp = (action_head(current_input[1]) - proprio)[...,:3]
                     v_sc = (action_head(current_input[1]) - action_head(next_action_embed))[...,:3]
-                    dist_sp = torch.norm(v_sp, dim=-1) # start to postion state
-                    dist_sc = torch.norm(v_sc, dim=-1) # start to current prediction
+                    dist_sp = torch.norm(v_sp, dim=-1) # start to postion state         chd: predicted nbp to real current proprio
+                    dist_sc = torch.norm(v_sc, dim=-1) # start to current prediction    chd: predicted nbp to last predicted action
                     # print(dist_sp - dist_sc, dist_sp1 - dist_sc1)
                     if ((dist_sp - dist_sc) < execute_threshold).all() and ((v_sp * v_sc).sum(dim=-1) >= 0).all():
-                        break
+                        break # chd： 可能一直达不到
                 elif action_order == 'HYBRID':
                     v_proprio_nbp = (action_head(current_input[1]) - proprio)[...,:3]
                     v_proprio_current = (action_head(next_action_embed) - proprio)[...,:3]

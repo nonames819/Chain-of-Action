@@ -316,7 +316,7 @@ class ReverseTemporalEnsemble(ActionSequence):
                     while np.linalg.norm(self.previous_v) < 0.002 + np.linalg.norm(current_v) and len(action)>1:
                         action = action[1:]
                         current_v = (action[-1]-action[0])[:3]
-            self._action_history[self._cur_step, -len(action):] = action
+            self._action_history[self._cur_step, -len(action):] = action # chd: 因为预测出action长度可能不一样，但最终都是nbp，所以填充当前hist_idx下后action_len长度的部分，对齐对于nbp的预测
 
         #reset action history when reach nbp
 
@@ -331,23 +331,23 @@ class ReverseTemporalEnsemble(ActionSequence):
                         # actions from [cur_step - sequence_length + 1, cur_step)
                         # Note that not all actions in this range will be valid as we might have
                         # execution_length > 1, which skips some of the intermediate steps.
-                        cur_actions = self._action_history[:, -len(action) + self._cur_step_inner + i]
+                        cur_actions = self._action_history[:, -len(action) + self._cur_step_inner + i] # start from the last predicted action (the one most close to current)
                         indices = np.all(cur_actions != 0, axis=1)
-                        cur_actions = cur_actions[indices]
+                        cur_actions = cur_actions[indices] # chd: (n_valid, 8)
 
                         # earlier predicted actions will have smaller weights.
-                        exp_weights = np.exp(-self._gain * np.arange(len(cur_actions)))
+                        exp_weights = np.exp(-self._gain * np.arange(len(cur_actions))) # decay weights
                         exp_weights = (exp_weights / exp_weights.sum())[:, None]
                         sub_action = (cur_actions * exp_weights).sum(axis=0)
 
                         if self.previous_v is None :
-                            break
+                            break # chd: 一开始默认跳出，来创建一个prev_v
                         
                         current_v = (action[-1]-sub_action)[:3]
                         if np.linalg.norm(self.previous_v) > 0.002 + np.linalg.norm(current_v) and (self.previous_v * current_v).sum()>0:
-                            break
+                            break # chd: 后者是点积>0，说明方向相同；前者是希望越来越接近keypose TODO：会不会有问题
                         elif -len(action) + self._cur_step_inner + i < -1:
-                            self._cur_step_inner +=1
+                            self._cur_step_inner +=1 # 若不满足条件且仍有更靠近nbp的历史动作可用，则继续调整
                             continue
                         else: 
                             break
@@ -368,7 +368,7 @@ class ReverseTemporalEnsemble(ActionSequence):
             # cv2.imwrite(f"debug/t_{self._cur_step}.png",np.moveaxis(observation['front_rgb'][0],0,2))
             
         
-            self._cur_step_inner +=1
+            self._cur_step_inner += 1
             if self.is_demo_env:
                 demo_actions[i] = info.pop("demo_action")
             total_reward += reward
@@ -378,7 +378,7 @@ class ReverseTemporalEnsemble(ActionSequence):
 
             if not self.is_demo_env:
                 if action_idx_reached == self._execution_length:
-                    break
+                    break # chd: 这里默认每一步都跳出
 
             if sub_action.sum() == 0:
                 break
@@ -389,7 +389,7 @@ class ReverseTemporalEnsemble(ActionSequence):
             if self._temporal_ensemble:
                 self.previous_v = (action[-1] - sub_action)[:3] # TODO: use action[-1] in history
                 if -len(action) + self._cur_step_inner + i == 0:
-                    self._init_action_history()
+                    self._init_action_history() # chd: 一个阶段结束
                     self.previous_v = None
             else:
                 self.previous_v = (action[-1] - sub_action)[:3]

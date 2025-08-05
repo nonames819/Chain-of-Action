@@ -84,3 +84,7 @@ coverage.xml
 logs/ 
 exp_local/
 wandb/
+
+# vis
+vis/dataset_info
+vis/dataset_info/*

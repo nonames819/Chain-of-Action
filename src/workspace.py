@@ -411,7 +411,7 @@ class Workspace:
                 action = action[0]  # expecting batch size of 1 for eval
 
         # Execute action in environment
-        next_observation, reward, termination, truncation, next_info = env.step(action)
+        next_observation, reward, termination, truncation, next_info = env.step(action) # chd: exec all actions of action_len 
         
         return action, (next_observation, reward, termination, truncation, next_info), metrics
 

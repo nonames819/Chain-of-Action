@@ -13,8 +13,13 @@ tmux has-session -t $SESSION 2>/dev/null && tmux kill-session -t $SESSION
 tmux new-session -d -s $SESSION  # 创建后台新会话
 
 folders=(
-    "exp_local/20250801/coa_open_box_rlbench_20250801010505/checkpoints"
-    # "/workspace/chd_data/Chain-of-Action/exp_local/20250801/coa_press_switch_rlbench_20250801005622/checkpoints"
+    "/workspace/chd_data/Chain-of-Action/exp_local/20250803/coa_pick_up_cup_rlbench_20250803014023/checkpoints",
+    "/workspace/chd_data/Chain-of-Action/exp_local/20250803/coa_open_drawer_rlbench_20250803014437/checkpoints",
+    "/workspace/chd_data/Chain-of-Action/exp_local/20250803/coa_stack_wine_rlbench_20250803014521/checkpoints",
+    "/workspace/chd_data/Chain-of-Action/exp_local/20250803/coa_sweep_to_dustpan_rlbench_20250803014536/checkpoints",
+    "/workspace/chd_data/Chain-of-Action/exp_local/20250803/coa_turn_tap_rlbench_20250803014546/checkpoints",
+    "/workspace/chd_data/Chain-of-Action/exp_local/20250803/coa_take_lid_off_saucepan_rlbench_20250803191517/checkpoints",
+    "/workspace/chd_data/Chain-of-Action/exp_local/20250803/coa_reach_target_rlbench_20250803192329/checkpoints"
 )
 
 window=0

@@ -30,7 +30,7 @@
             "args": [
                 "task=push_button",
                 "wandb.use=false" ,
-                "snapshot=exp_local/20250731/coa_push_button_rlbench_20250731003250/checkpoints/coa_5000.pt",
+                "snapshot=exp_local/20250731/coa_push_button_rlbench_20250731003250/checkpoints/coa_20000.pt",
                 "num_eval_episodes=1"
             ],
             "console": "integratedTerminal",
@@ -38,7 +38,7 @@
                 "CUDA_VISIBLE_DEVIEC": "4",
                 "DISPLAY":"localhost:11.0"
             },
-            "justMyCode": false,
+            "justMyCode": true,
         },
         {
             "name": "new eval coa",

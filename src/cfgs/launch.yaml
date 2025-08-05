@@ -51,6 +51,6 @@ env:
 
 hydra:
   run:
-    dir: ${exp_root}/exp_local/${now:%Y%m%d}/${method_name}_${env.task_name}_rlbench_${now:%Y%m%d%H%M%S}
+    dir: ${exp_root}/exp_local/test/${now:%Y%m%d}/${method_name}_${env.task_name}_rlbench_${now:%Y%m%d%H%M%S}
 
 

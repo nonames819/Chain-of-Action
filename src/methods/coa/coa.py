@@ -232,7 +232,7 @@ class ActorModel(nn.Module):
         img_feat = img_feat.flatten(2).permute(2, 0, 1) # torch.Size([64, 128, 512])
         img_pos_embed = img_pos_embed.flatten(2).permute(2, 0, 1) # torch.Size([64, 1, 512])
         
-        # Add memory position embeddings for proprio to img_pos_embed
+        # Add memory position embeddings for *proprio* to img_pos_embed
         mem_pos_embed = self.learnable_mem_pos_embed # torch.Size([1, 1, 512])
         pos_embed = torch.cat([img_pos_embed, mem_pos_embed], dim=0) # torch.Size([65, 1, 512])
 
@@ -395,7 +395,7 @@ class CoA(BaseMethod):
             Tuple containing action predictions and other intermediate results
         '''
         raw_img = extract_many_from_batch(batch_input, 'rgb')
-        img = flatten_time_dim_into_channel_dim(stack_tensor_dictionary(raw_img, dim=1)) # after stack, add a new dim(num_imgs) at axis 1 (4 images), then flatten num_imgs and t
+        img = flatten_time_dim_into_channel_dim(stack_tensor_dictionary(raw_img, dim=1)) # after stack, add a new dim(num_imgs) at axis 1 (4 images), then flatten num_imgs and t, shape torch.Size([1, 4, 1, 3, 128, 128])
         proprio = batch_input['low_dim_state'] # (bs, t=1, 8)
         if training:
             a_gt = batch_input['action'] # [128, 97, 2, 8]
@@ -410,7 +410,7 @@ class CoA(BaseMethod):
             task_emb = None
 
         # normalize img
-        img = self.img_normalizer(img/255)
+        img = self.img_normalizer(img/255) # torch.Size([1, 4, 3, 128, 128])
         # encoder forward
         obs_feat = self.encoder_model(img) # obs_feat: img_feat, pos_embed  torch.Size([128, 512, 4, 16]) torch.Size([1, 512, 4, 16]) concat the feature map at dim 3
         # actor forward
